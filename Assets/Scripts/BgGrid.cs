@@ -163,7 +163,23 @@ public class BgGrid : MonoBehaviour
                                             {
                                                 break;
                                             }
-                                            //else if(!pieceAbove.IsMoveable() && pieceAbove.Type != Piece)
+                                            else if(!pieceAbove.IsMoveable() && pieceAbove.Type != PieceType.EMPTY)
+                                            {
+                                                hasPieceAbove = false;
+                                                break;
+                                            }
+                                            
+                                        }
+                                        
+                                        if(!hasPieceAbove)
+                                        {
+                                            Destroy (diagonalPiece.gameObject);
+                                            piece.MoveableComponent.Move (diagX, y + 1, fillTime);
+                                            pieces [diagX, y + 1] = piece;
+                                            SpawnNewPiece (x, y, PieceType.EMPTY);
+                                            movedPiece = true;
+                                            
+                                            break;
                                         }
                                     }
                                 }
