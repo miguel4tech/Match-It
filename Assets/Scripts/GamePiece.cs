@@ -79,6 +79,20 @@ public class GamePiece : MonoBehaviour
         type = _type;
 
     }
+    void OnMouseEnter()
+    {
+        bgGrid.EnterPiece(this);
+    }
+
+    void OnMouseDown()
+    {
+        bgGrid.PressPiece(this);
+    }
+
+    void OnMouseUp()
+    {
+        bgGrid.ReleasePiece();
+    }
 
     public bool IsMoveable()
     {
