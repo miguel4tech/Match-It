@@ -85,21 +85,22 @@ public class BgGrid : MonoBehaviour
             }
 
         }
+        //Creating Obstacles
         #region Obstacle OBJ
         Destroy(pieces[1, 4].gameObject);
         SpawnNewPiece(1, 4, PieceType.OBSTACLE);
 
-        Destroy(pieces[2, 4].gameObject);
-        SpawnNewPiece(2, 4, PieceType.OBSTACLE);
+        // Destroy(pieces[2, 4].gameObject);
+        // SpawnNewPiece(2, 4, PieceType.OBSTACLE);
 
-        Destroy(pieces[3, 4].gameObject);
-        SpawnNewPiece(3, 4, PieceType.OBSTACLE);
+        // Destroy(pieces[3, 4].gameObject);
+        // SpawnNewPiece(3, 4, PieceType.OBSTACLE);
 
-        Destroy(pieces[4, 0].gameObject);
-        SpawnNewPiece(4, 0, PieceType.OBSTACLE);
+        // Destroy(pieces[4, 0].gameObject);
+        // SpawnNewPiece(4, 0, PieceType.OBSTACLE);
 
-        Destroy(pieces[5, 4].gameObject);
-        SpawnNewPiece(5, 4, PieceType.OBSTACLE);
+        // Destroy(pieces[5, 4].gameObject);
+        // SpawnNewPiece(5, 4, PieceType.OBSTACLE);
 
         Destroy(pieces[6, 4].gameObject);
         SpawnNewPiece(6, 4, PieceType.OBSTACLE);
@@ -118,11 +119,19 @@ public class BgGrid : MonoBehaviour
 
     public IEnumerator Fill()
     {
-        while (FillStep())
+        bool needsRefill = true;
+
+        while (needsRefill)
         {
-            inverse = !inverse;
             yield return new WaitForSeconds (fillTime);
+            while (FillStep())
+            {
+                inverse = !inverse;
+                yield return new WaitForSeconds (fillTime);
+            }  
+            needsRefill = ClearAllValidMatches();
         }
+        
     }
 
     public bool FillStep()
@@ -267,6 +276,10 @@ public class BgGrid : MonoBehaviour
 
                 piece1.MoveableComponent.Move(piece2.X, piece2.Y, fillTime);
                 piece2.MoveableComponent.Move(piece1X, piece1Y, fillTime);
+
+                ClearAllValidMatches();
+
+                StartCoroutine (Fill());
             }
             else
             {
@@ -389,7 +402,7 @@ public class BgGrid : MonoBehaviour
                         {
                             matchingPieces.Add(verticalPieces[j]);
                         }
-                        break;
+                        break; //Since we found a match we break out
                     }
                 }
             }
@@ -500,5 +513,34 @@ public class BgGrid : MonoBehaviour
         }
         return null; 
     }
+    public bool ClearAllValidMatches()
+    {
+        bool needsRefill = false;
+        for (int y = 0; y < yDim; y++)
+        {
+            for(int x = 0; x < xDim; x++)
+            {
+                if (pieces [x, y].IsClearable())
+                {
+                    List<GamePiece> match = GetMatch (pieces [x, y], x, y);
+                    if (match != null)
+                    {
+                        for(int i = 0; i < match.Count; i++)
+                        {
+                            if (ClearPiece (match [i].X, match [i].Y))
+                            {
+                                needsRefill = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return needsRefill;
+    }
+
+    //There's a bug in this block causing Memory leak
+    // C
+
 
 }

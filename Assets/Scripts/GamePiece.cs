@@ -36,7 +36,7 @@ public class GamePiece : MonoBehaviour
     {
         get { return bgGrid; }
     }
-
+    public ClearablePiece clearableComponent;
     private MoveablePiece moveableComponent;
 
     public MoveablePiece MoveableComponent
@@ -58,6 +58,7 @@ public class GamePiece : MonoBehaviour
     {
         moveableComponent = gameObject.GetComponent<MoveablePiece>();
         colorComponent = gameObject.GetComponent<ColorPiece>();
+        clearableComponent = gameObject.GetComponent<ClearablePiece>();
     }
     // Start is called before the first frame update
     void Start()
@@ -102,5 +103,9 @@ public class GamePiece : MonoBehaviour
     public bool IsColored()
     {
         return colorComponent != null;
+    }
+    public bool IsClearable()
+    {
+        return clearableComponent != null;
     }
 }
